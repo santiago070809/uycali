@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Productos</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        form { max-width: 500px; margin: 0 auto; }
+        label { display: block; margin-top: 10px; }
+        input, button { width: 100%; padding: 10px; margin-top: 5px; }
+        button { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        #productList { margin-top: 20px; }
+        .product { border: 1px solid #ddd; padding: 10px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <form id="productForm" action="productos.php" method="POST" enctype="multipart/form-data">
+        <h2>Agregar Nuevo Producto</h2>
+        <label for="productName">Nombre del Producto:</label>
+        <input type="text" id="productName" name="productName" required>
+        
+        <label for="productPrice">Precio:</label>
+        <input type="number" id="productPrice" name="productPrice" step="0.01" required>
+        
+        <label for="productImage">Imagen del Producto:</label>
+        <input type="file" id="productImage" name="productImage" accept="image/*" required>
+        
+        <button type="submit">Agregar Producto</button>
+    </form>
+
+    <div id="productList">
+        <h2>Productos Agregados</h2>
+        <!-- Los productos se agregarán aquí dinámicamente -->
+    </div>
+
+    <script>
+        // JavaScript para la funcionalidad adicional del formulario
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('productName').value;
+            const price = document.getElementById('productPrice').value;
+            const imageFile = document.getElementById('productImage').files[0];
+            
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    addProduct(name, price, e.target.result);
+                }
+                reader.readAsDataURL(imageFile);
+            }
+            
+            // Enviar formulario al script PHP (opcionalmente)
+            this.submit();
+        });
+
+        function addProduct(name, price, imageUrl) {
+            const productList = document.getElementById('productList');
+            const productDiv = document.createElement('div');
+            productDiv.className = 'product';
+            productDiv.innerHTML = `
+                <img src="${imageUrl}" alt="${name}" style="max-width: 100px;">
+                <h3>${name}</h3>
+                <p>Precio: $${price}</p>
+            `;
+            productList.appendChild(productDiv);
+
+            // Limpiar el formulario
+            document.getElementById('productForm').reset();
+        }
+    </script>
+</body>
+</html>
